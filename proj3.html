@@ -79,15 +79,18 @@
             var pathArray = urltext.split('/');
             var photo_id = pathArray[5];
             //alert(photo_id);
-            var apiurl = 'http://api.flickr.com/services/rest/?&method=flickr.photos.geo.getLocation&api_key=2a5672599c46b2267a95c4abd06cfd04&photo_id=' + photo_id + '&format=json'
+            var apiurl = 'http://api.flickr.com/services/rest/?&method=flickr.photos.geo.getLocation&api_key=2a5672599c46b2267a95c4abd06cfd04&photo_id=' + photo_id + '&format=json&nojsoncallback=1';
             alert(apiurl);
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function(){
                 if(this.readyState == 4 && this.status == 200){
-                    //alert(xmlhttp.response);
-                    var jsonresponse = xmlhttp.response;
-                    alert(jsonresponse);
-                    alert(jsonresponse[0]);
+                    var jsonresponse = JSON.parse(xmlhttp.responseText);
+                    var latitude = JSON.stringify(jsonresponse.photo.location.latitude);
+                    var longitude = JSON.stringify(jsonresponse.photo.location.longitude);
+                    console.log(latitude + ', ' + longitude);
+                    var nlatitude = Number(latitude);
+                    var nlongitude = Number(longitude);
+                    coord = {lat: nlatitude, lng: nlongitude};
                 }
             }
             xmlhttp.open("GET", apiurl);
@@ -110,8 +113,8 @@
           center: uluru
         });
         var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
+            position: coord,
+            map: map
         });
       }
     </script>
